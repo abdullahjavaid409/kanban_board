@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCard(AppFlowyGroupItem item) {
     if (item is KanBoardCardModel) {
-      return const KanBoardCardWidget();
+      return KanBoardCardWidget(cardModel: item);
     }
     throw UnimplementedError();
   }
@@ -212,7 +212,8 @@ extension HexColor on Color {
 }
 
 class KanBoardCardWidget extends StatelessWidget {
-  const KanBoardCardWidget({super.key});
+  final KanBoardCardModel cardModel;
+  const KanBoardCardWidget({super.key, required this.cardModel});
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +226,7 @@ class KanBoardCardWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              "KanBoard Task",
+              cardModel.title,
               style: Theme.of(context)
                   .textTheme
                   .bodyLarge
@@ -234,17 +235,19 @@ class KanBoardCardWidget extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             const VerticalSpacing(of: 5),
-            Text("KanBoard Board Like Trello Board",
+            Text(cardModel.description ?? '',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall),
             const VerticalSpacing(of: 10),
-            const Row(children: [
-              IconTitleWidget(),
+            Row(children: [
+              IconTitleWidget(
+                title: cardModel.logHour,
+              ),
               Spacer(),
               IconTitleWidget(
                 icon: Icons.chat_bubble_outline,
-                title: '1',
+                title: '${cardModel.chatLength ?? 0} Chats',
               ),
             ])
           ],
