@@ -31,29 +31,22 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     boardController = AppFlowyBoardScrollController();
     final group1 = AppFlowyGroupData(id: "To Do", name: "To Do", items: [
-      TextItem("Card 1"),
-      TextItem("Card 2"),
-      RichTextItem(title: "Card 3", subtitle: 'Aug 1, 2020 4:05 PM'),
-      TextItem("Card 4"),
-      TextItem("Card 5"),
+      KanBoardCardModel(title: "Card 1"),
+      KanBoardCardModel(title: "Card 2"),
     ]);
 
     final group2 = AppFlowyGroupData(
       id: "In Progress",
       name: "In Progress",
       items: <AppFlowyGroupItem>[
-        TextItem("Card 6"),
-        RichTextItem(title: "Card 7", subtitle: 'Aug 1, 2020 4:05 PM'),
-        RichTextItem(title: "Card 8", subtitle: 'Aug 1, 2020 4:05 PM'),
+        KanBoardCardModel(title: "Card 3"),
+        KanBoardCardModel(title: "Card 4"),
       ],
     );
 
-    final group3 =
-        AppFlowyGroupData(id: "Done", name: "Done", items: <AppFlowyGroupItem>[
-      TextItem("Card 9"),
-      RichTextItem(title: "Card 10", subtitle: 'Aug 1, 2020 4:05 PM'),
-      TextItem("Card 11"),
-      TextItem("Card 12"),
+    final group3 = AppFlowyGroupData(id: "Done", name: "Done", items: [
+      KanBoardCardModel(title: "Card 5"),
+      KanBoardCardModel(title: "Card 6"),
     ]);
 
     controller.addGroup(group1);
@@ -64,12 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final config = AppFlowyBoardConfig(
-      groupBackgroundColor: HexColor.fromHex('#F7F8FC'),
+      groupBackgroundColor: Colors.white,
+      boardCornerRadius: 12,
       stretchGroupHeight: false,
     );
     return Scaffold(
       body: SafeArea(
-        child: AppFlowyBoard(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0.w),
+          child: AppFlowyBoard(
             controller: controller,
             cardBuilder: (context, group, groupItem) {
               return AppFlowyGroupCard(
@@ -82,10 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
               return AppFlowyGroupFooter(
                 icon: const Icon(Icons.add, size: 20),
                 title: const Text('New'),
-                height: 50,
+                height: 50.h,
                 margin: config.groupBodyPadding,
                 onAddButtonClick: () {
-                  boardController.scrollToBottom(columnData.id);
+                  _showAddCardDialog(context, columnData.id);
                 },
               );
             },
@@ -104,87 +100,104 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                height: 50,
+                height: 50.h,
                 margin: config.groupBodyPadding,
               );
             },
             groupConstraints: const BoxConstraints.tightFor(width: 240),
-            config: config),
+            config: config,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildCard(AppFlowyGroupItem item) {
-    if (item is TextItem) {
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-          child: Text(item.s),
-        ),
-      );
+    if (item is KanBoardCardModel) {
+      return KanBoardCardWidget();
     }
-
-    if (item is RichTextItem) {
-      return RichTextCard(item: item);
-    }
-
     throw UnimplementedError();
   }
-}
 
-class RichTextCard extends StatefulWidget {
-  final RichTextItem item;
-  const RichTextCard({
-    required this.item,
-    super.key,
-  });
+  void _showAddCardDialog(BuildContext context, String groupId) {
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    final TextEditingController logHourController = TextEditingController();
 
-  @override
-  State<RichTextCard> createState() => _RichTextCardState();
-}
-
-class _RichTextCardState extends State<RichTextCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.item.title,
-              style: const TextStyle(fontSize: 14),
-              textAlign: TextAlign.left,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add New KanBoard Card'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter card title',
+                ),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter card description (optional)',
+                ),
+              ),
+              TextField(
+                controller: logHourController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter log hour (optional)',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            const SizedBox(height: 10),
-            Text(
-              widget.item.subtitle,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            )
+            TextButton(
+              child: const Text('Add'),
+              onPressed: () {
+                final title = titleController.text;
+                final description = descriptionController.text;
+                final logHour = logHourController.text;
+
+                if (title.isNotEmpty) {
+                  setState(() {
+                    final newItem = KanBoardCardModel(
+                      title: title,
+                      description: description.isNotEmpty ? description : null,
+                      logHour: logHour.isNotEmpty ? logHour : null,
+                    );
+                    controller.addGroupItem(groupId, newItem);
+                  });
+                }
+
+                Navigator.of(context).pop();
+              },
+            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
-class TextItem extends AppFlowyGroupItem {
-  final String s;
-
-  TextItem(this.s);
-
-  @override
-  String get id => s;
-}
-
-class RichTextItem extends AppFlowyGroupItem {
+class KanBoardCardModel extends AppFlowyGroupItem {
   final String title;
-  final String subtitle;
-
-  RichTextItem({required this.title, required this.subtitle});
+  final String? description;
+  final String? logHour;
+  final int? chatLength;
+  KanBoardCardModel({
+    required this.title,
+    this.description,
+    this.chatLength,
+    this.logHour,
+  });
 
   @override
   String get id => title;
@@ -196,5 +209,23 @@ extension HexColor on Color {
     if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(int.parse(buffer.toString(), radix: 16));
+  }
+}
+
+class KanBoardCardWidget extends StatelessWidget {
+  const KanBoardCardWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 1.w, vertical: 1.h),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text("KanBoard Task", style: Theme.of(context).textTheme.bodyLarge),
+        ],
+      ),
+    );
   }
 }

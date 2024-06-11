@@ -48,7 +48,7 @@ class ApiService extends Interceptor implements IApiService {
       responseHeader: false,
       compact: false,
     ));
-    (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
         httpClientCreate;
   }
 
