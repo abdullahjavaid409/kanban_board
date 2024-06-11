@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stretchGroupHeight: false,
     );
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: AppFlowyBoard(
           controller: controller,
