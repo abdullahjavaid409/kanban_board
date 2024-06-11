@@ -1,6 +1,7 @@
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kanban_board/widgets/common_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -56,57 +57,54 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final config = AppFlowyBoardConfig(
+    const config = AppFlowyBoardConfig(
       groupBackgroundColor: Colors.white,
       boardCornerRadius: 12,
       stretchGroupHeight: false,
     );
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0.w),
-          child: AppFlowyBoard(
-            controller: controller,
-            cardBuilder: (context, group, groupItem) {
-              return AppFlowyGroupCard(
-                key: ValueKey(groupItem.id),
-                child: _buildCard(groupItem),
-              );
-            },
-            boardScrollController: boardController,
-            footerBuilder: (context, columnData) {
-              return AppFlowyGroupFooter(
-                icon: const Icon(Icons.add, size: 20),
-                title: const Text('New'),
-                height: 50.h,
-                margin: config.groupBodyPadding,
-                onAddButtonClick: () {
-                  _showAddCardDialog(context, columnData.id);
-                },
-              );
-            },
-            headerBuilder: (context, columnData) {
-              return AppFlowyGroupHeader(
-                icon: const Icon(Icons.lightbulb_circle),
-                title: SizedBox(
-                  width: 90.w,
-                  child: TextField(
-                    controller: TextEditingController()
-                      ..text = columnData.headerData.groupName,
-                    onSubmitted: (val) {
-                      controller
-                          .getGroupController(columnData.headerData.groupId)!
-                          .updateGroupName(val);
-                    },
-                  ),
+        child: AppFlowyBoard(
+          controller: controller,
+          cardBuilder: (context, group, groupItem) {
+            return AppFlowyGroupCard(
+              key: ValueKey(groupItem.id),
+              child: _buildCard(groupItem),
+            );
+          },
+          boardScrollController: boardController,
+          footerBuilder: (context, columnData) {
+            return AppFlowyGroupFooter(
+              icon: const Icon(Icons.add, size: 20),
+              title: const Text('New'),
+              height: 50.h,
+              margin: config.groupBodyPadding,
+              onAddButtonClick: () {
+                _showAddCardDialog(context, columnData.id);
+              },
+            );
+          },
+          headerBuilder: (context, columnData) {
+            return AppFlowyGroupHeader(
+              icon: const Icon(Icons.lightbulb_circle),
+              title: SizedBox(
+                width: 90.w,
+                child: TextField(
+                  controller: TextEditingController()
+                    ..text = columnData.headerData.groupName,
+                  onSubmitted: (val) {
+                    controller
+                        .getGroupController(columnData.headerData.groupId)!
+                        .updateGroupName(val);
+                  },
                 ),
-                height: 50.h,
-                margin: config.groupBodyPadding,
-              );
-            },
-            groupConstraints: const BoxConstraints.tightFor(width: 240),
-            config: config,
-          ),
+              ),
+              height: 50.h,
+              margin: config.groupBodyPadding,
+            );
+          },
+          groupConstraints: const BoxConstraints.tightFor(width: 240),
+          config: config,
         ),
       ),
     );
@@ -114,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCard(AppFlowyGroupItem item) {
     if (item is KanBoardCardModel) {
-      return KanBoardCardWidget();
+      return const KanBoardCardWidget();
     }
     throw UnimplementedError();
   }
@@ -220,12 +218,54 @@ class KanBoardCardWidget extends StatelessWidget {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 1.w, vertical: 1.h),
       color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text("KanBoard Task", style: Theme.of(context).textTheme.bodyLarge),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "KanBoard Task",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const VerticalSpacing(of: 5),
+            Text("KanBoard Board Like Trello Board",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyMedium),
+            const VerticalSpacing(of: 10),
+            const Row(children: [
+              IconTitleWidget(),
+              Spacer(),
+              IconTitleWidget(
+                icon: Icons.chat_bubble_outline,
+                title: '1',
+              ),
+            ])
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class IconTitleWidget extends StatelessWidget {
+  final String? title;
+  final IconData? icon;
+  const IconTitleWidget({super.key, this.title, this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon ?? Icons.watch_later_outlined, size: 15.sp),
+        const HorizontalSpacing(of: 5),
+        Text(title ?? "Log ...")
+      ],
     );
   }
 }
