@@ -237,7 +237,7 @@ class KanBoardCardWidget extends StatelessWidget {
             Text("KanBoard Board Like Trello Board",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium),
+                style: Theme.of(context).textTheme.bodySmall),
             const VerticalSpacing(of: 10),
             const Row(children: [
               IconTitleWidget(),
