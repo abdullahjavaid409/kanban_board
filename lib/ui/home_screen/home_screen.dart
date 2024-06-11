@@ -242,13 +242,16 @@ class KanBoardCardWidget extends StatelessWidget {
             const VerticalSpacing(of: 10),
             Row(children: [
               IconTitleWidget(
-                title: cardModel.logHour,
+                title: cardModel.logHour != null
+                    ? cardModel.logHour ?? ''
+                    : "Log hour ...",
               ),
-              Spacer(),
-              IconTitleWidget(
-                icon: Icons.chat_bubble_outline,
-                title: '${cardModel.chatLength ?? 0} Chats',
-              ),
+              const Spacer(),
+              if (cardModel.chatLength != null)
+                IconTitleWidget(
+                  icon: Icons.chat_bubble_outline,
+                  title: '${cardModel.chatLength ?? 0} Chats',
+                ),
             ])
           ],
         ),
