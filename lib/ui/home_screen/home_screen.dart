@@ -166,6 +166,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 final logHour = logHourController.text;
 
                 if (title.isNotEmpty) {
+                  final groupController =
+                      controller.getGroupController(groupId);
+                  final existingCard = groupController?.groupData.items
+                      .whereType<KanBoardCardModel>()
+                      .any((card) =>
+                          card.title.toLowerCase() == title.toLowerCase());
+                  if (existingCard == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(''),
+                      ),
+                    );
+                  }
                   setState(() {
                     final newItem = KanBoardCardModel(
                       title: title,
