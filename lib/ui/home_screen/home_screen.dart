@@ -1,19 +1,13 @@
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kanban_board/widgets/common_widget.dart';
+import 'package:kanban_board/data/models/kan_board_card_model.dart';
+import 'package:kanban_board/ui/home_screen/component/kan_board_widget.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const routeName = '/home';
-
-  const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final AppFlowyBoardController controller = AppFlowyBoardController(
+final appFlowyBoardControllerProvider =
+    Provider<AppFlowyBoardController>((ref) {
+  final controller = AppFlowyBoardController(
     onMoveGroup: (fromGroupId, fromIndex, toGroupId, toIndex) {
       debugPrint('Move item from $fromIndex to $toIndex');
     },
@@ -25,43 +19,53 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   );
 
-  late AppFlowyBoardScrollController boardController;
+  final group1 = AppFlowyGroupData(id: "To Do", name: "To Do", items: [
+    KanBoardCardModel(title: "Card 1"),
+    KanBoardCardModel(title: "Card 2"),
+  ]);
+
+  final group2 = AppFlowyGroupData(
+    id: "In Progress",
+    name: "In Progress",
+    items: <AppFlowyGroupItem>[
+      KanBoardCardModel(title: "Card 3"),
+      KanBoardCardModel(title: "Card 4"),
+    ],
+  );
+
+  final group3 = AppFlowyGroupData(id: "Done", name: "Done", items: [
+    KanBoardCardModel(title: "Card 5"),
+    KanBoardCardModel(title: "Card 6"),
+  ]);
+
+  controller.addGroup(group1);
+  controller.addGroup(group2);
+  controller.addGroup(group3);
+
+  return controller;
+});
+
+final appFlowyBoardScrollControllerProvider =
+    Provider<AppFlowyBoardScrollController>((ref) {
+  return AppFlowyBoardScrollController();
+});
+
+class HomeScreen extends ConsumerWidget {
+  static const routeName = '/home';
+
+  const HomeScreen({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    boardController = AppFlowyBoardScrollController();
-    final group1 = AppFlowyGroupData(id: "To Do", name: "To Do", items: [
-      KanBoardCardModel(title: "Card 1"),
-      KanBoardCardModel(title: "Card 2"),
-    ]);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.watch(appFlowyBoardControllerProvider);
+    final boardController = ref.watch(appFlowyBoardScrollControllerProvider);
 
-    final group2 = AppFlowyGroupData(
-      id: "In Progress",
-      name: "In Progress",
-      items: <AppFlowyGroupItem>[
-        KanBoardCardModel(title: "Card 3"),
-        KanBoardCardModel(title: "Card 4"),
-      ],
-    );
-
-    final group3 = AppFlowyGroupData(id: "Done", name: "Done", items: [
-      KanBoardCardModel(title: "Card 5"),
-      KanBoardCardModel(title: "Card 6"),
-    ]);
-
-    controller.addGroup(group1);
-    controller.addGroup(group2);
-    controller.addGroup(group3);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     const config = AppFlowyBoardConfig(
       groupBackgroundColor: Colors.white,
       boardCornerRadius: 12,
       stretchGroupHeight: false,
     );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -81,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 50.h,
               margin: config.groupBodyPadding,
               onAddButtonClick: () {
-                _showAddCardDialog(context, columnData.id);
+                _showAddCardDialog(context, columnData.id, ref);
               },
             );
           },
@@ -113,12 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCard(AppFlowyGroupItem item) {
     if (item is KanBoardCardModel) {
-      return KanBoardCardWidget(cardModel: item);
+      return KanBoardCardWidget(
+        cardModel: item,
+        onEdit: (String) {},
+        onPressed: (BuildContext context) {},
+      );
     }
     throw UnimplementedError();
   }
 
-  void _showAddCardDialog(BuildContext context, String groupId) {
+  void _showAddCardDialog(BuildContext context, String groupId, WidgetRef ref) {
     final TextEditingController titleController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
     final TextEditingController logHourController = TextEditingController();
@@ -166,126 +174,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 final logHour = logHourController.text;
 
                 if (title.isNotEmpty) {
-                  final groupController =
-                      controller.getGroupController(groupId);
-                  final existingCard = groupController?.groupData.items
+                  final groupController = ref
+                      .read(appFlowyBoardControllerProvider)
+                      .getGroupController(groupId);
+                  if (groupController == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Group not found'),
+                      ),
+                    );
+                    return;
+                  }
+                  final existingCard = groupController.groupData.items
                       .whereType<KanBoardCardModel>()
                       .any((card) =>
                           card.title.toLowerCase() == title.toLowerCase());
-                  if (existingCard == true) {
+                  if (existingCard) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text(''),
+                        content:
+                            Text('Card with the same title already exists'),
                       ),
                     );
+                    return;
                   }
-                  setState(() {
-                    final newItem = KanBoardCardModel(
-                      title: title,
-                      description: description.isNotEmpty ? description : null,
-                      logHour: logHour.isNotEmpty ? logHour : null,
-                    );
-                    controller.addGroupItem(groupId, newItem);
-                  });
+                  final newItem = KanBoardCardModel(
+                    title: title,
+                    description: description.isNotEmpty ? description : null,
+                    logHour: logHour.isNotEmpty ? logHour : null,
+                  );
+                  groupController.add(newItem);
                 }
-
                 Navigator.of(context).pop();
               },
             ),
           ],
         );
       },
-    );
-  }
-}
-
-class KanBoardCardModel extends AppFlowyGroupItem {
-  final String title;
-  final String? description;
-  final String? logHour;
-  final int? chatLength;
-  KanBoardCardModel({
-    required this.title,
-    this.description,
-    this.chatLength,
-    this.logHour,
-  });
-
-  @override
-  String get id => title;
-}
-
-extension HexColor on Color {
-  static Color fromHex(String hexString) {
-    final buffer = StringBuffer();
-    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
-    buffer.write(hexString.replaceFirst('#', ''));
-    return Color(int.parse(buffer.toString(), radix: 16));
-  }
-}
-
-class KanBoardCardWidget extends StatelessWidget {
-  final KanBoardCardModel cardModel;
-  const KanBoardCardWidget({super.key, required this.cardModel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 1.w, vertical: 1.h),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              cardModel.title,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const VerticalSpacing(of: 5),
-            Text(cardModel.description ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall),
-            const VerticalSpacing(of: 10),
-            Row(children: [
-              IconTitleWidget(
-                title: cardModel.logHour != null
-                    ? cardModel.logHour ?? ''
-                    : "Log hour ...",
-              ),
-              const Spacer(),
-              if (cardModel.chatLength != null)
-                IconTitleWidget(
-                  icon: Icons.chat_bubble_outline,
-                  title: '${cardModel.chatLength ?? 0} Chats',
-                ),
-            ])
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class IconTitleWidget extends StatelessWidget {
-  final String? title;
-  final IconData? icon;
-  const IconTitleWidget({super.key, this.title, this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon ?? Icons.watch_later_outlined, size: 15.sp),
-        const HorizontalSpacing(of: 5),
-        Text(title ?? "Log ...")
-      ],
     );
   }
 }
