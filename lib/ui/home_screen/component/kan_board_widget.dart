@@ -92,11 +92,13 @@ class KanBoardCardWidget extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Edit KanBoard Card'),
+          backgroundColor: Colors.white,
+          title: const Text('Edit Card'),
           content: TextField(
             controller: titleController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Enter new card title',
+              hintStyle: Theme.of(context).textTheme.bodySmall,
             ),
           ),
           actions: [

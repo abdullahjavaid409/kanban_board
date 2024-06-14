@@ -136,7 +136,8 @@ class HomeScreen extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Add New KanBoard Card'),
+          backgroundColor: Colors.white,
+          title: const Text('Add Card'),
           content: TextField(
             controller: titleController,
             decoration: const InputDecoration(
