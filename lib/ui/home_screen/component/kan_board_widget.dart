@@ -8,12 +8,14 @@ class KanBoardCardWidget extends StatelessWidget {
   final KanBoardCardModel cardModel;
   final BuildContextCallback onPressed;
   final Function(String) onEdit;
+  final List<KanBoardCardModel> allCards;
 
   const KanBoardCardWidget({
     super.key,
     required this.cardModel,
     required this.onEdit,
     required this.onPressed,
+    required this.allCards,
   });
 
   @override
@@ -44,7 +46,7 @@ class KanBoardCardWidget extends StatelessWidget {
                   IconButton(
                     visualDensity: const VisualDensity(horizontal: -4),
                     onPressed: () {
-                      _showEditCardDialog(context, cardModel);
+                      _showEditCardDialog(context, cardModel, allCards);
                     },
                     icon: Icon(Icons.edit, size: 15.h),
                   ),
@@ -81,7 +83,8 @@ class KanBoardCardWidget extends StatelessWidget {
     );
   }
 
-  void _showEditCardDialog(BuildContext context, KanBoardCardModel cardModel) {
+  void _showEditCardDialog(BuildContext context, KanBoardCardModel cardModel,
+      List<KanBoardCardModel> allCards) {
     final TextEditingController titleController = TextEditingController()
       ..text = cardModel.title;
 
@@ -108,6 +111,21 @@ class KanBoardCardWidget extends StatelessWidget {
               onPressed: () {
                 final newTitle = titleController.text;
                 if (newTitle.isNotEmpty) {
+                  // Check for duplicate names across all cards
+                  final isDuplicate = allCards.any((card) =>
+                      card.title.toLowerCase() == newTitle.toLowerCase() &&
+                      card != cardModel);
+
+                  if (isDuplicate) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Card with the same title already exists'),
+                      ),
+                    );
+                    return;
+                  }
+
                   onEdit(newTitle);
                 }
                 Navigator.of(context).pop();

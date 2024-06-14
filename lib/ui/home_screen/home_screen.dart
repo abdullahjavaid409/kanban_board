@@ -66,6 +66,11 @@ class HomeScreen extends ConsumerWidget {
       stretchGroupHeight: false,
     );
 
+    final allCards = controller.groupDatas
+        .expand((group) => group.items)
+        .whereType<KanBoardCardModel>()
+        .toList();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -74,7 +79,16 @@ class HomeScreen extends ConsumerWidget {
           cardBuilder: (context, group, groupItem) {
             return AppFlowyGroupCard(
               key: ValueKey(groupItem.id),
-              child: _buildCard(groupItem),
+              child: KanBoardCardWidget(
+                cardModel: groupItem as KanBoardCardModel,
+                onEdit: (newTitle) {
+                  groupItem.title = newTitle;
+                  // Notify the controller that the item has changed
+                  controller.notifyListeners();
+                },
+                onPressed: (BuildContext context) {},
+                allCards: allCards,
+              ),
             );
           },
           boardScrollController: boardController,
@@ -108,56 +122,26 @@ class HomeScreen extends ConsumerWidget {
               margin: config.groupBodyPadding,
             );
           },
-          groupConstraints: const BoxConstraints.tightFor(width: 240),
+          groupConstraints: BoxConstraints.tightFor(width: 240.w),
           config: config,
         ),
       ),
     );
   }
 
-  Widget _buildCard(AppFlowyGroupItem item) {
-    if (item is KanBoardCardModel) {
-      return KanBoardCardWidget(
-        cardModel: item,
-        onEdit: (String) {},
-        onPressed: (BuildContext context) {},
-      );
-    }
-    throw UnimplementedError();
-  }
-
   void _showAddCardDialog(BuildContext context, String groupId, WidgetRef ref) {
     final TextEditingController titleController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-    final TextEditingController logHourController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Add New KanBoard Card'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter card title',
-                ),
-              ),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter card description (optional)',
-                ),
-              ),
-              TextField(
-                controller: logHourController,
-                decoration: const InputDecoration(
-                  hintText: 'Enter log hour (optional)',
-                ),
-              ),
-            ],
+          content: TextField(
+            controller: titleController,
+            decoration: const InputDecoration(
+              hintText: 'Enter card title',
+            ),
           ),
           actions: [
             TextButton(
@@ -170,26 +154,16 @@ class HomeScreen extends ConsumerWidget {
               child: const Text('Add'),
               onPressed: () {
                 final title = titleController.text;
-                final description = descriptionController.text;
-                final logHour = logHourController.text;
 
                 if (title.isNotEmpty) {
-                  final groupController = ref
-                      .read(appFlowyBoardControllerProvider)
-                      .getGroupController(groupId);
-                  if (groupController == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Group not found'),
-                      ),
-                    );
-                    return;
-                  }
-                  final existingCard = groupController.groupData.items
-                      .whereType<KanBoardCardModel>()
-                      .any((card) =>
-                          card.title.toLowerCase() == title.toLowerCase());
-                  if (existingCard) {
+                  final controller = ref.read(appFlowyBoardControllerProvider);
+
+                  // Check for duplicate names across all groups
+                  final isDuplicate = controller.groupDatas.any((group) =>
+                      group.items.whereType<KanBoardCardModel>().any((card) =>
+                          card.title.toLowerCase() == title.toLowerCase()));
+
+                  if (isDuplicate) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content:
@@ -198,10 +172,20 @@ class HomeScreen extends ConsumerWidget {
                     );
                     return;
                   }
+
+                  final groupController =
+                      controller.getGroupController(groupId);
+                  if (groupController == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Group not found'),
+                      ),
+                    );
+                    return;
+                  }
+
                   final newItem = KanBoardCardModel(
                     title: title,
-                    description: description.isNotEmpty ? description : null,
-                    logHour: logHour.isNotEmpty ? logHour : null,
                   );
                   groupController.add(newItem);
                 }
