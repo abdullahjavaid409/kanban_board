@@ -40,7 +40,6 @@ class HomeScreen extends ConsumerWidget {
                 cardModel: groupItem as KanBoardCardModel,
                 onEdit: (newTitle) {
                   groupItem.title = newTitle;
-                  // Notify the controller that the item has changed
                   controller.notifyListeners();
                 },
                 onPressed: (BuildContext context) {},

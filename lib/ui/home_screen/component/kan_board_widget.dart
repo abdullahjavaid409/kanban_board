@@ -54,20 +54,20 @@ class KanBoardCardWidget extends StatelessWidget {
                 ],
               ),
               const VerticalSpacing(of: 5),
-              Text(
-                cardModel.description ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (cardModel.description != null)
+                Text(
+                  cardModel.description ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               const VerticalSpacing(of: 10),
               Row(
                 children: [
-                  IconTitleWidget(
-                    title: cardModel.logHour != null
-                        ? cardModel.logHour ?? ''
-                        : "Log hour ...",
-                  ),
+                  if (cardModel.logHour != null)
+                    IconTitleWidget(
+                      title: cardModel.logHour ?? '',
+                    ),
                   const Spacer(),
                   if (cardModel.chatLength != null)
                     IconTitleWidget(
