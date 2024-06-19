@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban_board/constant/constants.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
+import 'package:kanban_board/ui/home_screen/component/kanboard_dilaog.dart';
 import 'package:kanban_board/widgets/common_widget.dart';
 
 class KanBoardCardWidget extends StatelessWidget {
@@ -46,7 +47,7 @@ class KanBoardCardWidget extends StatelessWidget {
                   IconButton(
                     visualDensity: const VisualDensity(horizontal: -4),
                     onPressed: () {
-                      _showEditCardDialog(context, cardModel, allCards);
+                      showEditCardDialog(context, cardModel, allCards, onEdit);
                     },
                     icon: Icon(Icons.edit, size: 15.h),
                   ),
@@ -80,62 +81,6 @@ class KanBoardCardWidget extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _showEditCardDialog(BuildContext context, KanBoardCardModel cardModel,
-      List<KanBoardCardModel> allCards) {
-    final TextEditingController titleController = TextEditingController()
-      ..text = cardModel.title;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text('Edit Card'),
-          content: TextField(
-            controller: titleController,
-            decoration: InputDecoration(
-              hintText: 'Enter new card title',
-              hintStyle: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                final newTitle = titleController.text;
-                if (newTitle.isNotEmpty) {
-                  // Check for duplicate names across all cards
-                  final isDuplicate = allCards.any((card) =>
-                      card.title.toLowerCase() == newTitle.toLowerCase() &&
-                      card != cardModel);
-
-                  if (isDuplicate) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content:
-                            Text('Card with the same title already exists'),
-                      ),
-                    );
-                    return;
-                  }
-
-                  onEdit(newTitle);
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }
