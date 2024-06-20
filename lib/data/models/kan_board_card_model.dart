@@ -1,4 +1,5 @@
 import 'package:appflowy_board/appflowy_board.dart';
+import 'package:kanban_board/common/logger/log.dart';
 
 class KanBoardCardModel extends AppFlowyGroupItem {
   String title;
@@ -20,15 +21,20 @@ class KanBoardCardModel extends AppFlowyGroupItem {
 
   // Method to start the timer
   void startTimer() {
-    startTime ??= DateTime.now();
+    if (startTime == null) {
+      startTime = DateTime.now();
+      d("Timer started at: $startTime");
+    }
   }
 
   // Method to stop the timer and calculate time spent
   void stopTimer() {
     if (startTime != null) {
-      timeSpent +=
+      int elapsed =
           DateTime.now().difference(startTime ?? DateTime.now()).inSeconds;
+      timeSpent += elapsed;
       startTime = null;
+      d("Timer stopped. Elapsed: $elapsed seconds. Total timeSpent: $timeSpent seconds");
     }
   }
 
@@ -36,6 +42,7 @@ class KanBoardCardModel extends AppFlowyGroupItem {
   void resetTimer() {
     timeSpent = 0;
     startTime = null;
+    d("Timer reset. Total timeSpent: $timeSpent seconds");
   }
 
   // Method to get the current elapsed time if the timer is running

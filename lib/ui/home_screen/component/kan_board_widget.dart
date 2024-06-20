@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban_board/constant/constants.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
 import 'package:kanban_board/ui/home_screen/component/kanboard_dilaog.dart';
+import 'package:kanban_board/ui/home_screen/provider/detail_provider.dart';
 import 'package:kanban_board/widgets/common_widget.dart';
 
-class KanBoardCardWidget extends StatelessWidget {
+class KanBoardCardWidget extends ConsumerWidget {
   final KanBoardCardModel cardModel;
   final BuildContextCallback onPressed;
   final Function(String) onEdit;
@@ -20,7 +22,10 @@ class KanBoardCardWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final description = ref.watch(descriptionProvider(cardModel));
+    final comments = ref.watch(commentsProvider(cardModel));
+
     return InkWell(
       onTap: () => onPressed(context),
       child: Card(
@@ -55,7 +60,7 @@ class KanBoardCardWidget extends StatelessWidget {
               ),
               const VerticalSpacing(of: 5),
               Text(
-                cardModel.description,
+                description,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall,
@@ -69,10 +74,10 @@ class KanBoardCardWidget extends StatelessWidget {
                           Duration(seconds: cardModel.timeSpent)),
                     ),
                   const Spacer(),
-                  if (cardModel.comments.isNotEmpty)
+                  if (comments.isNotEmpty)
                     IconTitleWidget(
                       icon: Icons.chat_bubble_outline,
-                      title: '${cardModel.comments.length}',
+                      title: '${comments.length}',
                     ),
                 ],
               ),
@@ -89,7 +94,13 @@ class KanBoardCardWidget extends StatelessWidget {
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$hours:$minutes:$seconds";
+    if (duration.inHours > 0) {
+      return "$hours:$minutes:$seconds";
+    } else if (duration.inMinutes > 0) {
+      return "$minutes:$seconds";
+    } else {
+      return "$seconds s";
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
-import 'package:kanban_board/ui/home_screen/component/kanboard_provider.dart';
+import 'package:kanban_board/ui/home_screen/provider/home_provider.dart';
 
 void showAddCardDialog(BuildContext context, String groupId, WidgetRef ref) {
   final TextEditingController titleController = TextEditingController();

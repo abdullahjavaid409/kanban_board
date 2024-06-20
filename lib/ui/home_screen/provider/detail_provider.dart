@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kanban_board/common/logger/log.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
 
 class TimerNotifier extends StateNotifier<Duration> {
@@ -56,7 +57,7 @@ class CommentsNotifier extends StateNotifier<List<String>> {
   void addComment(String comment) {
     card.comments = [...state, comment]; // Update the model's comments
     state = card.comments; // Update the state to trigger a rebuild
-    print("Comment added: $comment. Total comments: ${state.length}");
+    d("Comment added: $comment. Total comments: ${state.length}");
   }
 }
 

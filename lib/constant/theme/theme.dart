@@ -92,8 +92,8 @@ class AppTheme {
         contentPadding: EdgeInsets.zero,
       ),
       switchTheme: const SwitchThemeData(
-        trackColor: MaterialStatePropertyAll(primaryColor),
-        thumbColor: MaterialStatePropertyAll(AppColors.textColor),
+        trackColor: WidgetStatePropertyAll(primaryColor),
+        thumbColor: WidgetStatePropertyAll(AppColors.textColor),
       ),
       tabBarTheme: TabBarTheme(
         dividerColor: Colors.transparent,

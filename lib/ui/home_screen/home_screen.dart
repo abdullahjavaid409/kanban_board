@@ -6,9 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
 import 'package:kanban_board/ui/home_screen/component/kan_board_widget.dart';
 import 'package:kanban_board/ui/home_screen/component/kanboard_dilaog.dart';
-import 'package:kanban_board/ui/home_screen/component/kanboard_provider.dart';
-import 'package:kanban_board/ui/home_screen/kan_board_detail_screen/component/kan_board_detail_provider.dart';
-import 'package:kanban_board/ui/home_screen/kan_board_detail_screen/kanboard_detail_screen.dart';
+import 'package:kanban_board/ui/home_screen/detail_screen/detail_screen.dart';
+import 'package:kanban_board/ui/home_screen/provider/home_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   static const routeName = '/home';
@@ -38,7 +37,6 @@ class HomeScreen extends ConsumerWidget {
           controller: controller,
           cardBuilder: (context, group, groupItem) {
             final card = groupItem as KanBoardCardModel;
-            final trackedTime = ref.watch(timerProvider(card));
             return AppFlowyGroupCard(
               key: ValueKey(groupItem.id),
               child: KanBoardCardWidget(
@@ -48,7 +46,12 @@ class HomeScreen extends ConsumerWidget {
                   controller.notifyListeners();
                 },
                 onPressed: (BuildContext context) {
-                  context.push(KanBoardDetailScreen.routeName, extra: card);
+                  context
+                      .push(
+                        KanBoardDetailScreen.routeName,
+                        extra: card,
+                      )
+                      .then((_) => controller.notifyListeners());
                 },
                 allCards: allCards,
               ),
@@ -70,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
             return AppFlowyGroupHeader(
               icon: const Icon(Icons.lightbulb_circle),
               title: SizedBox(
-                width: 90.w,
+                width: columnData.headerData.groupName.length > 5 ? 90.w : 55.w,
                 child: TextField(
                   controller: TextEditingController()
                     ..text = columnData.headerData.groupName,

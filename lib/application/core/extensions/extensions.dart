@@ -67,27 +67,6 @@ extension TimeSlots on String {
 
   /// [7:30AM, 8:00AM, 8:30AM, 9:00AM, 9:30AM, 10:00AM, 10:30AM, 11:00AM, 11:30AM, 12:00PM, 12:30PM, 1:00PM, 1:30PM, 2:00 PM, 2:30 PM, 3:00 PM, 3:30 PM, 4:00 PM, 4:30 PM, 5:00 PM, 5:30 PM, 6:00 PM, 6:30 PM, 7:00 PM, 7:30 PM, 8:00 PM, 8:30 PM, 9:00 PM, 9:30 PM, 10:00 PM]
 
-  String categoriesTimeStamp(String date) {
-    DateTime dt1 = DateTime.parse("2021-12-23 11:47:00");
-    DateTime dt2 = DateTime.parse("2018-02-27 10:09:00");
-    String greeting = "";
-    final convertDate = date.convertFormattedTo24hr(date);
-
-    final hours = DateTime.parse(convertDate).hour;
-
-    if (hours >= 1 && hours <= 12) {
-      greeting = "Morning";
-    } else if (hours >= 12 && hours <= 16) {
-      greeting = "Afternoon";
-    } else if (hours >= 16 && hours <= 21) {
-      greeting = "Evening";
-    } else if (hours >= 21 && hours <= 24) {
-      greeting = "Good Night";
-    }
-
-    return greeting;
-  }
-
   String convertFormattedTo24hr(String timeString) {
     final DateFormat inputFormat = DateFormat("h:mm a");
     final DateFormat outputFormat = DateFormat('yyyy-MM-dd HH:mm');

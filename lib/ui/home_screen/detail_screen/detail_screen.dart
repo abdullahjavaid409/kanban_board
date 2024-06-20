@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
+import 'package:kanban_board/widgets/utils.dart';
 
-import 'component/kan_board_detail_provider.dart';
+import '../provider/detail_provider.dart';
 
 class KanBoardDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = '/KanBoardDetailScreen';
@@ -11,7 +12,8 @@ class KanBoardDetailScreen extends ConsumerStatefulWidget {
   const KanBoardDetailScreen({super.key, required this.card});
 
   @override
-  _KanBoardDetailScreenState createState() => _KanBoardDetailScreenState();
+  ConsumerState<KanBoardDetailScreen> createState() =>
+      _KanBoardDetailScreenState();
 }
 
 class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
@@ -48,12 +50,13 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
               controller: descriptionController,
               decoration: const InputDecoration(labelText: "Description"),
               onChanged: (val) {
-                widget.card.description = val;
+                ref
+                    .read(descriptionProvider(widget.card).notifier)
+                    .updateDescription(val);
               },
             ),
             const SizedBox(height: 10),
-            Text(
-                "Tracked Time: ${timer.inHours}:${timer.inMinutes % 60}:${timer.inSeconds % 60}"),
+            Text("Tracked Time: ${formatDuration(timer)}"),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -74,7 +77,7 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            Text("Comments"),
+            const Text("Comments"),
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
@@ -89,7 +92,6 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
             TextField(
               onSubmitted: (val) {
                 commentsNotifier.addComment(val);
-                widget.card.addComment(val);
               },
               decoration: const InputDecoration(
                 labelText: "Add a comment",
