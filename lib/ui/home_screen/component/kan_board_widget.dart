@@ -6,6 +6,7 @@ import 'package:kanban_board/data/models/kan_board_card_model.dart';
 import 'package:kanban_board/ui/home_screen/component/kanboard_dilaog.dart';
 import 'package:kanban_board/ui/home_screen/provider/detail_provider.dart';
 import 'package:kanban_board/widgets/common_widget.dart';
+import 'package:kanban_board/widgets/utils.dart';
 
 class KanBoardCardWidget extends ConsumerWidget {
   final KanBoardCardModel cardModel;
@@ -25,6 +26,7 @@ class KanBoardCardWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final description = ref.watch(descriptionProvider(cardModel));
     final comments = ref.watch(commentsProvider(cardModel));
+    final timer = ref.watch(timerProvider(cardModel));
 
     return InkWell(
       onTap: () => onPressed(context),
@@ -68,10 +70,9 @@ class KanBoardCardWidget extends ConsumerWidget {
               const VerticalSpacing(of: 10),
               Row(
                 children: [
-                  if (cardModel.timeSpent != 0)
+                  if (timer.inSeconds > 0)
                     IconTitleWidget(
-                      title: _formatDuration(
-                          Duration(seconds: cardModel.timeSpent)),
+                      title: formatDuration(timer),
                     ),
                   const Spacer(),
                   if (comments.isNotEmpty)
@@ -87,20 +88,6 @@ class KanBoardCardWidget extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    if (duration.inHours > 0) {
-      return "$hours:$minutes:$seconds";
-    } else if (duration.inMinutes > 0) {
-      return "$minutes:$seconds";
-    } else {
-      return "$seconds s";
-    }
   }
 }
 
