@@ -2,10 +2,13 @@ import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
 import 'package:kanban_board/ui/home_screen/component/kan_board_widget.dart';
 import 'package:kanban_board/ui/home_screen/component/kanboard_dilaog.dart';
 import 'package:kanban_board/ui/home_screen/component/kanboard_provider.dart';
+import 'package:kanban_board/ui/home_screen/kan_board_detail_screen/component/kan_board_detail_provider.dart';
+import 'package:kanban_board/ui/home_screen/kan_board_detail_screen/kanboard_detail_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   static const routeName = '/home';
@@ -34,15 +37,19 @@ class HomeScreen extends ConsumerWidget {
         child: AppFlowyBoard(
           controller: controller,
           cardBuilder: (context, group, groupItem) {
+            final card = groupItem as KanBoardCardModel;
+            final trackedTime = ref.watch(timerProvider(card));
             return AppFlowyGroupCard(
               key: ValueKey(groupItem.id),
               child: KanBoardCardWidget(
-                cardModel: groupItem as KanBoardCardModel,
+                cardModel: card,
                 onEdit: (newTitle) {
                   groupItem.title = newTitle;
                   controller.notifyListeners();
                 },
-                onPressed: (BuildContext context) {},
+                onPressed: (BuildContext context) {
+                  context.push(KanBoardDetailScreen.routeName, extra: card);
+                },
                 allCards: allCards,
               ),
             );
