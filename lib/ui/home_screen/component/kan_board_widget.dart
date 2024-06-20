@@ -54,25 +54,25 @@ class KanBoardCardWidget extends StatelessWidget {
                 ],
               ),
               const VerticalSpacing(of: 5),
-              if (cardModel.description != null)
-                Text(
-                  cardModel.description ?? '',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+              Text(
+                cardModel.description,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               const VerticalSpacing(of: 10),
               Row(
                 children: [
-                  if (cardModel.logHour != null)
+                  if (cardModel.timeSpent != 0)
                     IconTitleWidget(
-                      title: cardModel.logHour ?? '',
+                      title: _formatDuration(
+                          Duration(seconds: cardModel.timeSpent)),
                     ),
                   const Spacer(),
-                  if (cardModel.chatLength != null)
+                  if (cardModel.comments.isNotEmpty)
                     IconTitleWidget(
                       icon: Icons.chat_bubble_outline,
-                      title: '${cardModel.chatLength ?? 0} Chats',
+                      title: '${cardModel.comments.length}',
                     ),
                 ],
               ),
@@ -82,6 +82,14 @@ class KanBoardCardWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$hours:$minutes:$seconds";
   }
 }
 
