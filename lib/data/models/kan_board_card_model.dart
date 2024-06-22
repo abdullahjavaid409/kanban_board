@@ -1,62 +1,47 @@
+import 'dart:convert';
+
 import 'package:appflowy_board/appflowy_board.dart';
-import 'package:kanban_board/common/logger/log.dart';
+import 'package:kanban_board/domain/entities/kanboard_card.dart';
 
-class KanBoardCardModel extends AppFlowyGroupItem {
-  String title;
-  String description;
-  int timeSpent; // Time spent in seconds
-  List<String> comments;
-  DateTime? startTime; // Start time for the timer
-
-  KanBoardCardModel({
-    required this.title,
-    this.description = '',
-    this.timeSpent = 0,
-    this.comments = const [],
-    this.startTime,
+class KanbanCardModel extends KanbanCard implements AppFlowyGroupItem {
+  KanbanCardModel({
+    required super.title,
+    super.description,
+    super.timeSpent,
+    super.comments,
+    super.startTime,
   });
 
   @override
   String get id => title;
 
-  // Method to start the timer
-  void startTimer() {
-    if (startTime == null) {
-      startTime = DateTime.now();
-      d("Timer started at: $startTime");
-    }
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'description': description,
+      'timeSpent': timeSpent,
+      'comments': jsonEncode(comments),
+      'startTime': startTime?.toIso8601String(),
+    };
   }
 
-  // Method to stop the timer and calculate time spent
-  void stopTimer() {
-    if (startTime != null) {
-      int elapsed =
-          DateTime.now().difference(startTime ?? DateTime.now()).inSeconds;
-      timeSpent += elapsed;
-      startTime = null;
-      d("Timer stopped. Elapsed: $elapsed seconds. Total timeSpent: $timeSpent seconds");
-    }
+  factory KanbanCardModel.fromMap(Map<String, dynamic> map) {
+    return KanbanCardModel(
+      title: map['title'],
+      description: map['description'],
+      timeSpent: map['timeSpent'],
+      comments: List<String>.from(jsonDecode(map['comments'])),
+      startTime:
+          map['startTime'] != null ? DateTime.parse(map['startTime']) : null,
+    );
   }
 
-  // Method to reset the timer
-  void resetTimer() {
-    timeSpent = 0;
-    startTime = null;
-    d("Timer reset. Total timeSpent: $timeSpent seconds");
-  }
+  @override
+  bool get draggable => true;
 
-  // Method to get the current elapsed time if the timer is running
-  int getElapsedTime() {
-    if (startTime != null) {
-      return timeSpent +
-          DateTime.now().difference(startTime ?? DateTime.now()).inSeconds;
-    } else {
-      return timeSpent;
-    }
-  }
+  @override
+  bool get isPhantom => false;
 
-  // Method to add a comment
-  void addComment(String comment) {
-    comments = [...comments, comment];
-  }
+  @override
+  set draggable(__) {}
 }
