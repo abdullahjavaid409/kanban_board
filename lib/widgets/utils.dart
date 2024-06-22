@@ -1,3 +1,6 @@
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:kanban_board/constant/app_color/app_colors.dart';
+
 String formatDuration(Duration duration) {
   String twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -12,4 +15,14 @@ String formatDuration(Duration duration) {
   } else {
     return "${twoDigits(seconds)}s";
   }
+}
+
+void displayToast(String? message) {
+  if (message == null) return;
+
+  Fluttertoast.showToast(
+    webPosition: 'center',
+    backgroundColor: AppColors.lightBlack,
+    msg: message,
+  );
 }
