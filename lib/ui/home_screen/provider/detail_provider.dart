@@ -74,6 +74,24 @@ class CommentsNotifier extends StateNotifier<List<String>> {
     state = card.comments; // Update the state to trigger a rebuild
     d("Comment added: $comment. Total comments: ${state.length}");
   }
+
+  void updateComment(int index, String newComment) {
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (i == index) newComment else state[i]
+    ];
+    card.comments = state;
+    d('Comment updated: $newComment at index $index.');
+  }
+
+  void deleteComment(int index) {
+    state = [
+      for (int i = 0; i < state.length; i++)
+        if (i != index) state[i]
+    ];
+    card.comments = state;
+    d('Comment deleted at index $index.');
+  }
 }
 
 final descriptionProvider = StateNotifierProvider.family<DescriptionNotifier,

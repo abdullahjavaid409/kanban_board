@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
+import 'package:kanban_board/ui/home_screen/provider/detail_provider.dart';
+import 'package:kanban_board/widgets/common_widget.dart';
 import 'package:kanban_board/widgets/utils.dart';
-
-import '../provider/detail_provider.dart';
 
 class KanBoardDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = '/KanBoardDetailScreen';
@@ -46,13 +46,13 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
+            KanBoardTextField(
               controller: descriptionController,
-              decoration: const InputDecoration(labelText: "Description"),
+              hintText: 'Description',
               onChanged: (val) {
-                ref
-                    .read(descriptionProvider(widget.card).notifier)
-                    .updateDescription(val);
+                if (val == null) return;
+                ref.read(descriptionProvider(widget.card).notifier).state = val;
+                widget.card.description = val;
               },
             ),
             const SizedBox(height: 10),
@@ -82,9 +82,30 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
             Expanded(
               child: ListView.builder(
                 itemCount: comments.length,
+                padding: EdgeInsets.zero,
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(comments[index]),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'Edit') {
+                          _showEditCommentDialog(context, commentsNotifier,
+                              index, comments[index]);
+                        } else if (value == 'Delete') {
+                          commentsNotifier.deleteComment(index);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'Edit',
+                          child: Text('Edit'),
+                        ),
+                        PopupMenuItem(
+                          value: 'Delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -101,6 +122,40 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showEditCommentDialog(BuildContext context,
+      CommentsNotifier commentsNotifier, int index, String currentComment) {
+    final TextEditingController commentController =
+        TextEditingController(text: currentComment);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit Comment'),
+          content: TextField(
+            controller: commentController,
+            decoration: const InputDecoration(
+              labelText: 'Comment',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                commentsNotifier.updateComment(index, commentController.text);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
