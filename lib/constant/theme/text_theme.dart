@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kanban_board/constant/app_color/app_colors.dart';
 
 class AppTextTheme {
@@ -86,6 +87,7 @@ class AppTextTheme {
     return TextStyle(
       fontWeight: fontWeight,
       fontSize: fontSize,
+      fontFamily: GoogleFonts.manrope().fontFamily,
       color: color,
       letterSpacing: letterSpacing,
     );
