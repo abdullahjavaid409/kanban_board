@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kanban_board/constant/app_color/app_colors.dart';
 import 'package:kanban_board/constant/constants.dart';
 
 class VerticalSpacing extends StatelessWidget {
@@ -97,6 +98,7 @@ class KanBoardTextField extends StatelessWidget {
   final InputBorder? focusedBorder;
   final String? Function(String?)? validator;
   final void Function(String?)? onChanged;
+  final void Function(String?)? onFieldSubmitted;
 
   const KanBoardTextField({
     super.key,
@@ -118,6 +120,7 @@ class KanBoardTextField extends StatelessWidget {
     this.labelText,
     this.isReadOnly = false,
     this.onChanged,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -133,24 +136,83 @@ class KanBoardTextField extends StatelessWidget {
       style: Theme.of(context).textTheme.bodySmall,
       inputFormatters: inputFormatters,
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
         prefixIcon: prefix,
         labelText: labelText,
         contentPadding: const EdgeInsets.all(16).r,
         suffixIcon: suffixIcon,
+        hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(),
         hintText: hintText,
-        hintStyle: hintStyle ??
-            Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                ),
         filled: true,
         fillColor: Colors.white,
-        border: border ?? const OutlineInputBorder(),
-        enabledBorder: enabledBorder ?? const OutlineInputBorder(),
-        focusedBorder: focusedBorder ?? const OutlineInputBorder(),
+        border: border ??
+            OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    BorderSide(color: AppColors.lightBlack.withOpacity(0.1))),
+        enabledBorder: enabledBorder ??
+            OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    BorderSide(color: AppColors.lightBlack.withOpacity(0.1))),
+        focusedBorder: focusedBorder ??
+            OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    BorderSide(color: AppColors.lightBlack.withOpacity(0.1))),
       ),
       validator: validator,
+    );
+  }
+}
+
+class KanBoardElevatedButton extends StatelessWidget {
+  final BuildContextCallback? onTap;
+  final String title;
+  final Color? color;
+  final Size? size;
+  final EdgeInsets? padding;
+  final TextStyle? textStyle;
+  final double borderRadius;
+  final VisualDensity? visualDensity;
+  final Widget? child;
+  final OutlinedBorder? shape;
+
+  const KanBoardElevatedButton({
+    required this.title,
+    super.key,
+    this.borderRadius = 13,
+    this.size,
+    this.padding,
+    required this.onTap,
+    this.child,
+    this.color = AppColors.backgroundColor,
+    this.textStyle,
+    this.shape,
+    this.visualDensity,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: padding ?? const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          fixedSize: size,
+          padding: padding,
+          visualDensity: visualDensity,
+          shape: shape,
+        ),
+        child: child ??
+            Text(
+              title,
+              maxLines: 1,
+              style: textStyle ?? Theme.of(context).textTheme.bodyLarge,
+            ),
+        onPressed: () => onTap == null ? null : onTap!(context),
+      ),
     );
   }
 }
