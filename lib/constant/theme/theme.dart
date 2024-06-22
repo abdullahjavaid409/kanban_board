@@ -5,7 +5,7 @@ import 'package:kanban_board/constant/theme/text_theme.dart';
 
 class AppTheme {
   static lightTheme(BuildContext context) {
-    const primaryColor = AppColors.primaryColor;
+    const primaryColor = AppColors.textColor;
 
     final textTheme = AppTextTheme.lightTheme(context);
 
@@ -59,6 +59,10 @@ class AppTheme {
       dividerTheme: const DividerThemeData(
         thickness: 0.2,
       ),
+      cardTheme: const CardTheme(
+        color: AppColors.backgroundColor,
+      ),
+      dialogBackgroundColor: AppColors.backgroundColor,
       dropdownMenuTheme: DropdownMenuThemeData(
         inputDecorationTheme: InputDecorationTheme(
           contentPadding:
