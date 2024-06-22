@@ -37,7 +37,9 @@ class HomeScreen extends ConsumerWidget {
           cardBuilder: (context, group, groupItem) {
             final card = groupItem as KanBoardCardModel;
             return AppFlowyGroupCard(
-              decoration: const BoxDecoration(color: AppColors.backgroundColor),
+              decoration: const BoxDecoration(
+                  color: AppColors.backgroundColor,
+                  borderRadius: BorderRadius.all(Radius.circular(12))),
               key: ValueKey(groupItem.id),
               child: KanBoardCardWidget(
                 cardModel: card,
@@ -61,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
           footerBuilder: (context, columnData) {
             return AppFlowyGroupFooter(
               icon: const Icon(Icons.add, size: 20),
-              title: Text('New', style: Theme.of(context).textTheme.bodyMedium),
+              title: Text('New', style: Theme.of(context).textTheme.bodyLarge),
               height: 50.h,
               margin: config.groupBodyPadding,
               onAddButtonClick: () {
@@ -71,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
           },
           headerBuilder: (context, columnData) {
             return AppFlowyGroupHeader(
-              icon: const Icon(Icons.lightbulb_circle),
+              icon: Icon(Icons.lightbulb_circle, size: 25.h),
               title: SizedBox(
                 width: columnData.headerData.groupName.length > 5 ? 90.w : 55.w,
                 child: TextField(

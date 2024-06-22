@@ -35,11 +35,12 @@ class KanBoardCardWidget extends ConsumerWidget {
       padding: const EdgeInsets.all(10.0),
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
-      boxShadow: [
+      boxShadow: const [
         BoxShadow(
-          color: AppColors.lightBlack.withOpacity(0.1),
-          spreadRadius: 0.7,
-          offset: const Offset(0, 4),
+          color: AppColors.shadowColor,
+          spreadRadius: 2,
+          blurRadius: 0.1,
+          offset: Offset(0, 4),
         ),
       ],
       child: Column(
@@ -52,7 +53,7 @@ class KanBoardCardWidget extends ConsumerWidget {
                   cardModel.title,
                   style: Theme.of(context)
                       .textTheme
-                      .bodyLarge
+                      .headlineSmall
                       ?.copyWith(fontWeight: FontWeight.w400),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -72,7 +73,7 @@ class KanBoardCardWidget extends ConsumerWidget {
             description,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           const VerticalSpacing(of: 10),
           Row(
@@ -107,7 +108,7 @@ class IconTitleWidget extends StatelessWidget {
       children: [
         Icon(icon ?? Icons.watch_later_outlined, size: 15.sp),
         const HorizontalSpacing(of: 5),
-        Text(title ?? "Log ...")
+        Text(title ?? "Log ...", style: Theme.of(context).textTheme.bodyMedium)
       ],
     );
   }
