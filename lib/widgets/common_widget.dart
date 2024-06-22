@@ -146,21 +146,9 @@ class KanBoardTextField extends StatelessWidget {
                 ),
         filled: true,
         fillColor: Colors.white,
-        border: border ??
-            OutlineInputBorder(
-              borderSide: const BorderSide(width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-        enabledBorder: enabledBorder ??
-            OutlineInputBorder(
-              borderSide: const BorderSide(width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-        focusedBorder: focusedBorder ??
-            OutlineInputBorder(
-              borderSide: const BorderSide(width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
+        border: border ?? const OutlineInputBorder(),
+        enabledBorder: enabledBorder ?? const OutlineInputBorder(),
+        focusedBorder: focusedBorder ?? const OutlineInputBorder(),
       ),
       validator: validator,
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban_board/application/main_config/routes/route_generator.dart';
+import 'package:kanban_board/constant/theme/theme.dart';
 
 class KanbanBoard extends StatelessWidget {
   const KanbanBoard({super.key});
@@ -12,6 +13,7 @@ class KanbanBoard extends StatelessWidget {
       minTextAdapt: true,
       builder: (_, __) => MaterialApp.router(
         title: 'KanbanBoard',
+        theme: AppTheme.lightTheme(context),
         debugShowCheckedModeBanner: false,
         routerConfig: AppRouter.router,
       ),

@@ -32,18 +32,18 @@ class AppTextTheme {
           headlineMedium: _buildTextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 20.sp,
-            color: AppColors.textPlaceHolderColor,
+            color: AppColors.textColor,
           ),
           headlineSmall: _buildTextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 18.sp,
             letterSpacing: 0.5,
-            color: AppColors.textPlaceHolderColor,
+            color: AppColors.textColor,
           ),
           titleLarge: _buildTextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 20.sp,
-            color: AppColors.textPlaceHolderColor,
+            color: AppColors.textColor,
           ),
           titleMedium: _buildTextStyle(
             fontWeight: FontWeight.bold,

@@ -38,7 +38,6 @@ class AppTheme {
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(style: elevatedButtonStyle),
-      hintColor: AppColors.textPlaceHolderColor,
       scaffoldBackgroundColor: AppColors.backgroundColor,
       brightness: Brightness.light,
       primaryColor: primaryColor,
@@ -47,35 +46,8 @@ class AppTheme {
         onError: const Color(0xffFE0000),
         onTertiary: const Color(0xff7CFF01),
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        errorBorder: inputBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.errorColor),
-          borderRadius: borderRadius,
-        ),
-        focusedBorder: inputBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.textColor),
-          borderRadius: borderRadius,
-        ),
-        focusedErrorBorder: inputBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.errorColor),
-          borderRadius: borderRadius,
-        ),
-        enabledBorder: inputBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.textPlaceHolderColor),
-          borderRadius: borderRadius,
-        ),
-        border: inputBorder.copyWith(
-          borderSide: const BorderSide(
-            color: AppColors.textPlaceHolderColor,
-            width: 2.0,
-          ),
-          borderRadius: borderRadius,
-        ),
-        errorMaxLines: 3,
-        errorStyle: textTheme.bodyMedium?.copyWith(color: AppColors.errorColor),
-      ),
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
@@ -83,7 +55,7 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      iconTheme: IconThemeData(color: AppColors.textColor, size: 20.h),
+      iconTheme: IconThemeData(size: 20.h),
       listTileTheme: ListTileThemeData(
         iconColor: primaryColor,
         textColor: AppColors.textColor,
@@ -115,7 +87,6 @@ class AppTheme {
         showUnselectedLabels: false,
       ),
       dividerTheme: const DividerThemeData(
-        color: AppColors.textPlaceHolderColor,
         thickness: 0.2,
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
@@ -134,28 +105,15 @@ class AppTheme {
       ),
       dialogTheme: DialogTheme(
         titleTextStyle: textTheme.titleSmall,
-        backgroundColor: const Color.fromRGBO(243, 243, 243, 0.10),
         iconColor: AppColors.textColor,
       ),
-      dialogBackgroundColor: const Color.fromRGBO(243, 243, 243, 0.10),
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: const Color(0xffF3F3F3).withOpacity(0.5),
-        dragHandleColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(32),
-            topRight: Radius.circular(32),
-          ),
-        ),
-        dragHandleSize: Size(0.6.sw, 3.h),
-      ),
       popupMenuTheme: PopupMenuThemeData(
-        color: AppColors.textColor,
+        color: AppColors.backgroundColor,
         textStyle: textTheme.bodyMedium,
         iconColor: AppColors.textColor,
         position: PopupMenuPosition.under,
-        labelTextStyle: MaterialStatePropertyAll(
-            textTheme.bodyMedium?.copyWith(color: AppColors.backgroundColor)),
+        labelTextStyle: WidgetStatePropertyAll(
+            textTheme.bodyMedium?.copyWith(color: AppColors.textColor)),
       ),
     );
   }

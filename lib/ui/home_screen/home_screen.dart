@@ -31,7 +31,6 @@ class HomeScreen extends ConsumerWidget {
         .toList();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: AppFlowyBoard(
           controller: controller,

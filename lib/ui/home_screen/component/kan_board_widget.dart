@@ -56,7 +56,7 @@ class KanBoardCardWidget extends ConsumerWidget {
                     onPressed: () {
                       showEditCardDialog(context, cardModel, allCards, onEdit);
                     },
-                    icon: Icon(Icons.edit, size: 15.h),
+                    icon: Icon(Icons.edit),
                   ),
                 ],
               ),

@@ -40,7 +40,10 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
     final commentsNotifier = ref.read(commentsProvider(widget.card).notifier);
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.card.title)),
+      appBar: AppBar(
+        title: Text(widget.card.title),
+        backgroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -60,19 +63,25 @@ class _KanBoardDetailScreenState extends ConsumerState<KanBoardDetailScreen> {
             const SizedBox(height: 10),
             Row(
               children: [
-                ElevatedButton(
-                  onPressed: () => timerNotifier.start(),
-                  child: const Text("Start"),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => timerNotifier.start(),
+                    child: const Text("Start"),
+                  ),
                 ),
                 const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => timerNotifier.stop(),
-                  child: const Text("Stop"),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => timerNotifier.stop(),
+                    child: const Text("Stop"),
+                  ),
                 ),
                 const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => timerNotifier.reset(),
-                  child: const Text("Reset"),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => timerNotifier.reset(),
+                    child: const Text("Reset"),
+                  ),
                 ),
               ],
             ),
