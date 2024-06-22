@@ -6,28 +6,8 @@ abstract class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params prams);
 }
 
-abstract class UseCased<Type, Params> {
-  Future<Either<Failure, Type>> call(Params prams, String educationId);
-}
-
-abstract class TwoIntegerWithStringUseCase<Type, Params> {
-  Future<Either<Failure, Type>> call(
-      Params prams, int perPage, int pageNoString, String date);
-}
-
-abstract class FourParameterUseCase<Type, Params> {
-  Future<Either<Failure, Type>> call(
-      Params prams, String years, String occurrence, String userId, int month);
-}
-
-abstract class HomePageStatusUseCase<Type, Params> {
-  Future<Either<Failure, Type>> call(
-      Params prams, String appointmentId, String status);
-}
-
-abstract class HomePageListUseCase<Type, Params> {
-  Future<Either<Failure, Type>> call(
-      Params prams, int perPage, int pageNoString);
+abstract class NoParamsUseCase<Type> {
+  Future<Either<Failure, Type>> call();
 }
 
 class NoParams extends Equatable {
