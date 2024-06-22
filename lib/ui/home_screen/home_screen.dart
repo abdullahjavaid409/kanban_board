@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kanban_board/constant/app_color/app_colors.dart';
 import 'package:kanban_board/data/models/kan_board_card_model.dart';
 import 'package:kanban_board/ui/home_screen/component/kan_board_widget.dart';
 import 'package:kanban_board/ui/home_screen/component/kanboard_dilaog.dart';
@@ -20,8 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final boardController = ref.watch(appFlowyBoardScrollControllerProvider);
 
     const config = AppFlowyBoardConfig(
-      groupBackgroundColor: Colors.white,
-      boardCornerRadius: 12,
+      groupBodyPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       stretchGroupHeight: false,
     );
 
@@ -37,6 +37,7 @@ class HomeScreen extends ConsumerWidget {
           cardBuilder: (context, group, groupItem) {
             final card = groupItem as KanBoardCardModel;
             return AppFlowyGroupCard(
+              decoration: const BoxDecoration(color: AppColors.backgroundColor),
               key: ValueKey(groupItem.id),
               child: KanBoardCardWidget(
                 cardModel: card,
@@ -60,7 +61,7 @@ class HomeScreen extends ConsumerWidget {
           footerBuilder: (context, columnData) {
             return AppFlowyGroupFooter(
               icon: const Icon(Icons.add, size: 20),
-              title: const Text('New'),
+              title: Text('New', style: Theme.of(context).textTheme.bodyMedium),
               height: 50.h,
               margin: config.groupBodyPadding,
               onAddButtonClick: () {
@@ -83,11 +84,10 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              height: 50.h,
               margin: config.groupBodyPadding,
             );
           },
-          groupConstraints: BoxConstraints.tightFor(width: 240.w),
+          groupConstraints: BoxConstraints.tightFor(width: 0.9.sw),
           config: config,
         ),
       ),
